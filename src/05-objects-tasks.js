@@ -152,36 +152,114 @@ function fromJSON(proto, json) {
  *  For more examples see unit tests.
  */
 
+
+class Selector {
+  constructor() {
+    this.element = '';
+    this.id = '';
+    this.classes = [];
+    this.attrs = [];
+    this.pseudoClasses = [];
+    this.pseudoElements = [];
+  }
+
+  setElement(element) {
+    this.element = element;
+  }
+
+  setId(id) {
+    this.id = id;
+  }
+
+  addClass(cl) {
+    this.classes.push(cl);
+  }
+
+  addAttr(attr) {
+    this.attrs.push(attr);
+  }
+
+  addPseudoClass(pseudoClass) {
+    this.pseudoClasses.push(pseudoClass);
+  }
+
+  addPseudoElement(pseudoElement) {
+    this.pseudoElements.push(pseudoElement);
+  }
+
+  stringify() {
+    let result = '';
+    if (this.element) {
+      result += this.element;
+    }
+
+    if (this.id) {
+      result += `#${this.id}`;
+    }
+
+    if (this.classes.length !== 0) {
+      result += `.${this.classes.join('.')}`;
+    }
+
+    if (this.attrs.length !== 0) {
+      result += Array.from(this.attrs, (value) => `[${value}]`).join('');
+    }
+
+    if (this.pseudoClasses.length !== 0) {
+      result += `:${this.pseudoClasses.join(':')}`;
+    }
+
+    if (this.pseudoElements.length !== 0) {
+      result += `::${this.pseudoElements.join('::')}`;
+    }
+
+    return result;
+  }
+}
+
 const cssSelectorBuilder = {
-  element(/* value */) {
-    throw new Error('Not implemented');
+  selector: new Selector(),
+
+  element(value) {
+    this.selector.setElement(value);
+    return this;
   },
 
-  id(/* value */) {
-    throw new Error('Not implemented');
+  id(value) {
+    this.selector.setId(value);
+    return this;
   },
 
-  class(/* value */) {
-    throw new Error('Not implemented');
+  class(value) {
+    this.selector.addClass(value);
+    return this;
   },
 
-  attr(/* value */) {
-    throw new Error('Not implemented');
+  attr(value) {
+    this.selector.addAttr(value);
+    return this;
   },
 
-  pseudoClass(/* value */) {
-    throw new Error('Not implemented');
+  pseudoClass(value) {
+    this.selector.addPseudoClass(value);
+    return this;
   },
 
-  pseudoElement(/* value */) {
-    throw new Error('Not implemented');
+  pseudoElement(value) {
+    this.selector.addPseudoElement(value);
+    return this;
+  },
+
+  stringify() {
+    const result = this.selector.stringify();
+    this.selector = new Selector();
+    return result;
   },
 
   combine(/* selector1, combinator, selector2 */) {
     throw new Error('Not implemented');
   },
 };
-
 
 module.exports = {
   Rectangle,
