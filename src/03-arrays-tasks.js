@@ -160,7 +160,7 @@ function insertItem(arr, item, index) {
  *    [ 'a', 'b', 'c', 'd'], 3  => [ 'a', 'b', 'c' ]
  */
 function getHead(arr, n) {
-  return arr.splice(0, n);
+  return [...arr].splice(0, n);
 }
 
 
@@ -175,7 +175,7 @@ function getHead(arr, n) {
  *    [ 'a', 'b', 'c', 'd'], 3  => [ 'b', 'c', 'd' ]
  */
 function getTail(arr, n) {
-  return arr.splice(-n);
+  return [...arr].splice(-n);
 }
 
 
@@ -233,10 +233,18 @@ function toArrayOfSquares(arr) {
  *   [ 0, 0, 0, 0, 0]         => [ 0, 0, 0, 0, 0]
  *   [ 1, 2, 3, 4, 5, 6, 7, 8, 9, 10 ] => [ 1, 3, 6, 10, 15, 21, 28, 36, 45, 55 ]
  */
-function getMovingSum(/* arr */) {
-  throw new Error('Not implemented');
-}
+function getMovingSum(arr) {
+  const result = [];
+  result.push(arr[0]);
+  function callbackFn(accumulator, currentValue) {
+    const sum = accumulator + currentValue;
+    result.push(sum);
+    return sum;
+  }
 
+  arr.reduce(callbackFn);
+  return result;
+}
 /**
  * Returns every second item from the specified array:
  *
@@ -267,8 +275,8 @@ function getSecondItems(arr) {
  *  [ 'a', 'b', 'c', null ] => [ 'a', 'b','b', 'c','c','c',  null,null,null,null ]
  *  [ 1,2,3,4,5 ] => [ 1, 2,2, 3,3,3, 4,4,4,4, 5,5,5,5,5 ]
  */
-function propagateItemsByPositionIndex(/* arr */) {
-  throw new Error('Not implemented');
+function propagateItemsByPositionIndex(arr) {
+  return arr.map((value, index) => Array(index + 1).fill(value)).flat();
 }
 
 
@@ -339,10 +347,14 @@ function sortDigitNamesByNumericOrder(arr) {
  *   [ -1, 1, -1, 1 ]      => 0
  *   [ 1, 10, 100, 1000 ]  => 1111
  */
-function getItemsSum(/* arr */) {
-  throw new Error('Not implemented');
-}
+function getItemsSum(arr) {
+  let result = 0;
+  if (arr.length > 0) {
+    result = arr.reduce((accumulator, currentValue) => accumulator + currentValue);
+  }
 
+  return result;
+}
 /**
  * Returns the number of all falsy value in the specified array
  *
@@ -459,10 +471,16 @@ function sortCitiesArray(arr) {
  *           [0,0,0,1,0],
  *           [0,0,0,0,1]]
  */
-function getIdentityMatrix(/* n */) {
-  throw new Error('Not implemented');
-}
+function getIdentityMatrix(n) {
+  const arr = Array.from(Array(n), () => Array(n).fill(0));
+  function callbackFn(value, index) {
+    const tmpArr = Array.from(value);
+    tmpArr[index] = 1;
+    return tmpArr;
+  }
 
+  return arr.map(callbackFn);
+}
 /**
  * Creates an array of integers from the specified start to end (inclusive)
  *
@@ -499,8 +517,8 @@ function getIntervalArray(start, end) {
  *   [ 'a', 'a', 'a', 'a' ]  => [ 'a' ]
  *   [ 1, 1, 2, 2, 3, 3, 4, 4] => [ 1, 2, 3, 4]
  */
-function distinct(/* arr */) {
-  throw new Error('Not implemented');
+function distinct(arr) {
+  return arr.filter((value, index) => arr.indexOf(value) === index);
 }
 
 /**
@@ -533,8 +551,21 @@ function distinct(/* arr */) {
  *    "Poland" => ["Lodz"]
  *   }
  */
-function group(/* array, keySelector, valueSelector */) {
-  throw new Error('Not implemented');
+function group(array, keySelector, valueSelector) {
+  const dict = new Map();
+  function callbackFn(accDict, currentPair) {
+    const key = keySelector(currentPair);
+    const value = valueSelector(currentPair);
+    if (!accDict.has(key)) {
+      accDict.set(key, [value]);
+    } else {
+      accDict.get(key).push(value); // Map.get() возвращает ссылку на массив вместо его копии
+    }
+
+    return accDict;
+  }
+
+  return array.reduce(callbackFn, dict);
 }
 
 
@@ -551,8 +582,8 @@ function group(/* array, keySelector, valueSelector */) {
  *   [[1, 2], [3, 4], [5, 6]], (x) => x     =>   [ 1, 2, 3, 4, 5, 6 ]
  *   ['one','two','three'], (x) => x.split('')  =>   ['o','n','e','t','w','o','t','h','r','e','e']
  */
-function selectMany(/* arr, childrenSelector */) {
-  throw new Error('Not implemented');
+function selectMany(arr, childrenSelector) {
+  return arr.map((value) => childrenSelector(value)).flat();
 }
 
 
@@ -568,8 +599,8 @@ function selectMany(/* arr, childrenSelector */) {
  *   ['one','two','three'], [2]       => 'three'  (arr[2])
  *   [[[ 1, 2, 3]]], [ 0, 0, 1 ]      => 2        (arr[0][0][1])
  */
-function getElementByIndexes(/* arr, indexes */) {
-  throw new Error('Not implemented');
+function getElementByIndexes(arr, indexes) {
+  return indexes.reduce((arrMultiD, currentIndex) => arrMultiD[currentIndex], arr);
 }
 
 
